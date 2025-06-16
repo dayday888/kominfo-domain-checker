@@ -2,8 +2,8 @@ name: Cek Domain Kominfo
 
 on:
   schedule:
-    - cron: "*/10 * * * *"     # Setiap 10 menit
-  workflow_dispatch:           # Bisa juga dijalankan manual
+    - cron: "*/20 * * * *"     
+  workflow_dispatch:           
 
 jobs:
   run-checker:
