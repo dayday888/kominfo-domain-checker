@@ -1,16 +1,12 @@
-import requests
+import requests, os
 
-TELEGRAM_TOKEN = "7936697834:AAEUjyS3Nq-iPFGdcgiE4YGINlK3vq3n1kI"
-CHAT_ID = "-4806495065"  # Ganti dengan ID grup kamu
-DOMAINS = [
-    "retrotengah.com",
-    "retroaman.com",
-    "senjacerdas.com",
-    "senjaluas.com",
-    "prediksi2.senjalive.pro",
-    "buku.retroprediksi.live",
-    "live.putaransenang.xyz"
-]
+# Ambil dari Secrets GitHub
+TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
+CHAT_ID = os.environ["CHAT_ID"]
+
+# Baca file domains.txt
+with open("domains.txt") as f:
+    DOMAINS = [d.strip() for d in f if d.strip()]
 
 def cek_domain(domain):
     url = f"https://check.skiddle.id/?domain={domain}&json=true"
@@ -23,19 +19,34 @@ def cek_domain(domain):
 
 def kirim_telegram(pesan):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    requests.post(url, data={"chat_id": CHAT_ID, "text": pesan, "parse_mode":"Markdown"})
+    requests.post(url, data={"chat_id": CHAT_ID, "text": pesan, "parse_mode": "Markdown"})
 
 if __name__ == "__main__":
-    hasil = []
+    total = len(DOMAINS)
+    gagal = []
+    blokir = []
+    aman = []
+
     for d in DOMAINS:
         status = cek_domain(d)
         if isinstance(status, str):
-            hasil.append(f"⚠️ {d} - {status}")
+            gagal.append(f"{d} ({status})")
         elif status:
-            hasil.append(f"🚫 {d} *NAWALA 😭*")
+            blokir.append(d)
         else:
-            hasil.append(f"✅ {d} AMAN 😁")
+            aman.append(d)
 
-    pesan = "📡 *Hasil Cek TrustPositif:*\n\n" + "\n".join(hasil)
+    # Format pesan
+    if len(blokir) == 0:
+        pesan = f"✅ Semua domain aman dicek ({total} domain total)."
+    else:
+        diblokir = ", ".join(blokir)
+        pesan = f"⚠️ {len(blokir)} domain diblokir: {diblokir} — sisanya aman."
+
+    # Tambahkan info gagal jika ada
+    if gagal:
+        gagal_str = "\n\n⚠️ Gagal dicek:\n" + "\n".join(gagal)
+        pesan += gagal_str
+
     kirim_telegram(pesan)
     print(pesan)
