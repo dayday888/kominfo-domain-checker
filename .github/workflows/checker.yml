@@ -2,12 +2,16 @@ name: Cek Domain Kominfo
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
-  workflow_dispatch:
+    - cron: "*/5 * * * *"     # Setiap 5 menit
+  workflow_dispatch:           # Bisa juga dijalankan manual
 
 jobs:
   run-checker:
     runs-on: ubuntu-latest
+    env:                        
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      CHAT_ID: ${{ secrets.CHAT_ID }}
+
     steps:
       - name: Clone repo
         uses: actions/checkout@v3
