@@ -32,9 +32,9 @@ if __name__ == "__main__":
         if isinstance(status, str):
             hasil.append(f"⚠️ {d} - {status}")
         elif status:
-            hasil.append(f"🚫 {d} *NAWALA😭😭😭*")
+            hasil.append(f"🚫 {d} *NAWALA 😭*")
         else:
-            hasil.append(f"✅ {d} AMAN😁😁😁")
+            hasil.append(f"✅ {d} AMAN 😁")
 
     pesan = "📡 *Hasil Cek TrustPositif:*\n\n" + "\n".join(hasil)
     kirim_telegram(pesan)
